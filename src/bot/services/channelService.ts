@@ -29,23 +29,26 @@ export async function channelMenu(ctx: Context) {
 }
 
 export async function handleAddChannel(ctx: Context) {
-  //@ts-ignore
-  const channelId = ctx.message!.forward_origin!.chat.id
-  const channel = await ctx.api.getChat(channelId)
+  try {
+    //@ts-ignore
+    const channelId = ctx.message!.forward_origin!.chat.id
+    const channel = await ctx.api.getChat(channelId)
 
-  if (!channel.username && !channel.invite_link) {
-    await ctx.reply(`🔐 КАНАЛ ПРИВАТНЫЙ ‼️
+    if (!channel.username && !channel.invite_link) {
+      await ctx.reply(`🔐 КАНАЛ ПРИВАТНЫЙ ‼️
 Боту нужна админка для добавления юзеров`)
-  } else {
-    await addChannel(channelId)
-    await ctx.reply(`<b>✅ ДОБАВЛЕН канал <a href='${
-      channel.username
-        ? `https://t.me/${channel.username}/`
-        : channel.invite_link
-    }'>${channel.title}</a></b>
+    } else {
+      await addChannel(channelId)
+      await ctx.reply(`<b>✅ ДОБАВЛЕН канал <a href='${
+        channel.username
+          ? `https://t.me/${channel.username}/`
+          : channel.invite_link
+      }'>${channel.title}</a></b>
 `)
+    }
+  } catch (error) {
+    ctx.reply('❌ Бота нет в этом канале')
   }
-  await ctx.reply(JSON.stringify(channel))
 }
 
 export async function handleDeleteChannel(ctx: Context) {
