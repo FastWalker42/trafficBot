@@ -1,7 +1,7 @@
 import { Context } from 'grammy'
 import {
   channelMenu,
-  handleAddChannel,
+  channelInputWait,
   handleDeleteChannel,
 } from '../services/channelService'
 import {
@@ -17,7 +17,7 @@ const ACTIONS = {
   edit: channelMenu,
   notabot: notaBot,
   adminMenu: adminMenu,
-  addChannel: handleAddChannel,
+  addChannel: channelInputWait,
   prospam_all: spamInputWait,
   del: handleDeleteChannel,
   deladmin: handleDeleteAdmin,
@@ -31,9 +31,7 @@ function isActionName(name: string): name is keyof typeof ACTIONS {
 export default async (ctx: Context) => {
   await ctx.deleteMessage()
 
-  const callbackData = ctx.callbackQuery?.data
-  if (!callbackData) return
-
+  const callbackData = ctx.callbackQuery?.data!
   const actionKey = callbackData.split('-')[0]
 
   if (isActionName(actionKey)) {

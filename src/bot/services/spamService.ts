@@ -1,4 +1,6 @@
 import { Context } from 'grammy'
+import { Message } from 'grammy/types'
+
 import { cancelAdminKb } from '../utils/keyboardBuilder'
 import parseMessageBtns from '../utils/parseMessageBtns'
 import {
@@ -24,7 +26,7 @@ export async function spamInputWait(ctx: Context) {
 Жду ваше сообщение для рассылки
 ${guideText}`,
     {
-      reply_markup: cancelAdminKb(),
+      reply_markup: cancelAdminKb,
     }
   )
 }
@@ -34,64 +36,59 @@ export async function msgSpamAll(ctx: Context) {
   let offset = 0
   let sent = 0
 
+  const msg = ctx.message!
+
+  let sendFn: (userId: number) => Promise<Message>
+
+  if (msg.photo) {
+    const { text, keyboard } = parseMessageBtns(msg.caption || '')
+    sendFn = async (userId) =>
+      ctx.api.sendPhoto(userId, msg.photo!.at(-1)!.file_id, {
+        caption: text,
+        reply_markup: keyboard,
+      })
+  } else if (msg.video) {
+    const { text, keyboard } = parseMessageBtns(msg.caption || '')
+    sendFn = async (userId) =>
+      ctx.api.sendVideo(userId, msg.video!.file_id, {
+        caption: text,
+        reply_markup: keyboard,
+      })
+  } else if (msg.animation) {
+    const { text, keyboard } = parseMessageBtns(msg.caption || '')
+    sendFn = async (userId) =>
+      ctx.api.sendAnimation(userId, msg.animation!.file_id, {
+        caption: text,
+        reply_markup: keyboard,
+      })
+  } else if (msg.text) {
+    const { text, keyboard } = parseMessageBtns(msg.text)
+    sendFn = async (userId) =>
+      ctx.api.sendMessage(userId, text, {
+        reply_markup: keyboard,
+      })
+  } else {
+    await ctx.reply('❌ Поддерживаются только текст, фото и видео')
+    return
+  }
+
   while (true) {
     const users = await getUsersBatch(offset, batchSize)
     if (users.length === 0) break
 
-    const msg = ctx.message!
     for (const user of users) {
       try {
-        if (msg.photo) {
-          const { text, keyboard } = parseMessageBtns(
-            ctx.message!.caption!
-          )
-
-          await ctx.api.sendPhoto(
-            user.user_id,
-            msg.photo.at(-1)!.file_id,
-            {
-              caption: text,
-              reply_markup: keyboard,
-            }
-          )
-        } else if (msg.video) {
-          const { text, keyboard } = parseMessageBtns(
-            ctx.message!.caption!
-          )
-
-          await ctx.api.sendVideo(user.user_id, msg.video.file_id, {
-            caption: text,
-            reply_markup: keyboard,
-          })
-        } else {
-          const { text, keyboard } = parseMessageBtns(
-            ctx.message!.text!
-          )
-
-          await ctx.api.sendMessage(user.user_id, text, {
-            reply_markup: keyboard,
-          })
-        }
+        await sendFn(user.user_id)
         sent++
         await wait(30)
-      } catch (err: any) {
-        if (err.error_code === 403) {
-          // заблокирован
-        } else if (err.error_code === 429) {
-          const delay = err.parameters?.retry_after ?? 5
-          console.log(`⏳ Флудконтроль: пауза ${delay}s`)
-          await wait(delay * 1000)
-        } else {
-          console.error(`❌ Ошибка user ${user.user_id}:`, err)
-        }
-      }
+      } catch (err) {}
     }
 
     offset += batchSize
-    await wait(500) // пауза между пачками
+    await wait(500)
   }
 
-  ctx.reply(`✅ Рассылка завершена. Отправлено: ${sent}`)
+  await ctx.reply(`✅ Отправлено: ${sent}`)
 }
 
 function wait(ms: number): Promise<void> {

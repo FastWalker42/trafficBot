@@ -14,7 +14,7 @@ export default async (ctx: Context) => {
       await msgSpamAll(ctx)
       await setUserState(id, 'none')
       await adminMenu(ctx)
-    } else {
+    } else if (user?.state === 'opchannel_input') {
       await handleAddChannel(ctx)
     }
   }

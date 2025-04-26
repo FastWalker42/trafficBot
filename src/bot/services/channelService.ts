@@ -3,9 +3,18 @@ import {
   addChannel,
   checkUser,
   deleteChannel,
+  setUserState,
 } from '../../db/methods'
 import validateId from '../utils/validateId'
 import { parseCallbackData } from '../utils/parseCallBack'
+import { cancelAdminKb } from '../utils/keyboardBuilder'
+
+const channelEditKb = (channelId: number | string) => {
+  return new InlineKeyboard()
+    .text('❌ Удалить', `del-${channelId}`)
+    .row()
+    .text('Назад в меню ⤵️', `adminMenu`)
+}
 
 export async function channelMenu(ctx: Context) {
   const channelId = parseCallbackData(ctx.callbackQuery!.data!)
@@ -20,30 +29,41 @@ export async function channelMenu(ctx: Context) {
         : channel.invite_link
     }'>${channelData.title ? channelData.title : '❓'}</a>`,
     {
-      reply_markup: new InlineKeyboard()
-        .text('❌ Удалить', `del-${channelId}`)
-        .row()
-        .text('Назад в меню ⤵️', `adminMenu`),
+      reply_markup: channelEditKb(channelId),
     }
   )
 }
 
 export async function handleAddChannel(ctx: Context) {
-  //@ts-ignore
-  const channelId = ctx.message!.forward_origin!.chat.id
-  const channel = await ctx.api.getChat(channelId)
+  try {
+    if (ctx.message?.forward_origin) {
+      //@ts-ignore
+      const channelId = ctx.message!.forward_origin.chat.id
+      const channel = await ctx.api.getChat(channelId)
 
-  if (!channel.username && !channel.invite_link) {
-    await ctx.reply(`🔐 КАНАЛ ПРИВАТНЫЙ ‼️
+      if (!channel.username && !channel.invite_link) {
+        await ctx.reply(`🔐 КАНАЛ ПРИВАТНЫЙ ‼️
 Боту нужна админка для добавления юзеров`)
-  } else {
-    await addChannel(channelId)
-    await ctx.reply(`<b>✅ ДОБАВЛЕН канал <a href='${
-      channel.username
-        ? `https://t.me/${channel.username}/`
-        : channel.invite_link
-    }'>${channel.title}</a></b>
-`)
+      } else {
+        await addChannel(channelId)
+        await ctx.reply(
+          `<b>✅ ДОБАВЛЕН канал <a href='${
+            channel.username
+              ? `https://t.me/${channel.username}/`
+              : channel.invite_link
+          }'>${channel.title}</a></b>
+`,
+          { reply_markup: channelEditKb(channelId) }
+        )
+      }
+    } else {
+      ctx.reply(
+        '⚠️ Перешлите сообщение ИЗ КАНАЛА чтобы добавить его.',
+        { reply_markup: cancelAdminKb }
+      )
+    }
+  } catch (error) {
+    ctx.reply('❌ Бота нет в канале', { reply_markup: cancelAdminKb })
   }
 }
 
@@ -80,6 +100,8 @@ export async function channelInputWait(ctx: Context) {
     return
   }
 
+  await setUserState(ctx.from!.id, 'opchannel_input')
+
   await ctx.reply(
     `<b>📊 ДОБАВЛЕНИЕ КАНАЛА 🤖</b>
 <blockquote>📩 перешлите любое сообщение из канала.
@@ -87,10 +109,7 @@ export async function channelInputWait(ctx: Context) {
 <b>❗️для приватных каналов нужно выдать боту права добавлять пользователей</b></blockquote>
 `,
     {
-      reply_markup: new InlineKeyboard().text(
-        'Отменить',
-        'adminMenu'
-      ),
+      reply_markup: cancelAdminKb,
     }
   )
 }

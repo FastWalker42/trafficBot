@@ -1,3 +1,3 @@
 export function parseCallbackData(data: string): string {
-  return data.split('-')[1]
+  return data.substring(data.indexOf('-') + 1)
 }

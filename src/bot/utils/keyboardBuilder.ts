@@ -57,10 +57,10 @@ export const adminChannels = async (ctx: Context) => {
   return kb
 }
 
-export const cancelAdminKb = () => {
-  const kb = new InlineKeyboard().text('❌ Назад', 'adminMenu')
-  return kb
-}
+export const cancelAdminKb = new InlineKeyboard().text(
+  '❌ Назад',
+  'adminMenu'
+)
 
 export const editAdminsKeyboard = async (ctx: Context) => {
   const kb = new InlineKeyboard()
