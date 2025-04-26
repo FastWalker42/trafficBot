@@ -27,7 +27,7 @@ export async function channelMenu(ctx: Context) {
       channel.username
         ? `https://t.me/${channel.username}/`
         : channel.invite_link
-    }'>${channelData.title ? channelData.title : '❓'}</a>`,
+    }'>${channelData.title ?? '❓'}</a>`,
     {
       reply_markup: channelEditKb(channelId),
     }

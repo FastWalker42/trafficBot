@@ -40,10 +40,7 @@ export const adminChannels = async (ctx: Context) => {
   for (let [index, channel] of channels.entries()) {
     const channelData = await ctx.api.getChat(validateId(channel))
 
-    kb.text(
-      `${channelData.title ? channelData.title : '❓'}`,
-      `edit-${channel}`
-    )
+    kb.text(`${channelData.title ?? '❓'}`, `edit-${channel}`)
     if (index % 2 !== 0) {
       kb.row()
     }
