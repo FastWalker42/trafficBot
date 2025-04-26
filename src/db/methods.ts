@@ -44,7 +44,7 @@ export async function addAdmin(user_id: number): Promise<boolean> {
   return result.rowsAffected > 0
 }
 
-export async function removeAdmin(user_id: number): Promise<boolean> {
+export async function deleteAdmin(user_id: number): Promise<boolean> {
   const result = await db
     .update(usersTable)
     .set({ is_admin: 0 })
@@ -75,7 +75,7 @@ export async function addChannel(
   return result.rowsAffected > 0
 }
 
-export async function removeChannel(
+export async function deleteChannel(
   channel_id: string
 ): Promise<boolean> {
   const result = await db

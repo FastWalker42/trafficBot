@@ -3,7 +3,7 @@ import { getAllChannels } from '../../db/methods'
 
 const validStatus = ['member', 'administrator', 'creator']
 
-export default async (ctx: Context): Promise<boolean> => {
+export async function checkUserSub(ctx: Context): Promise<boolean> {
   const userId = ctx.from!.id
   const channels = await getAllChannels()
 

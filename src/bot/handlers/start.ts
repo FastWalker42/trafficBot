@@ -1,6 +1,6 @@
 import { Context, InlineKeyboard } from 'grammy'
 import { checkUser } from '../../db/methods'
-import adminMenu from './adminMenu'
+import { adminMenu } from '../services/adminService'
 import { handleReferral } from '../services/referalService'
 import { parseCommandArgs } from '../utils/parseCommandArgs'
 

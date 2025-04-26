@@ -1,9 +1,8 @@
 import { Context } from 'grammy'
 import { checkUser, setUserState } from '../../db/methods'
 import { handleAddChannel } from '../services/channelService'
-import adminMenu from './adminMenu'
-
-import makeProspamAll from '../features/spam/msgSpamAll'
+import { adminMenu } from '../services/adminService'
+import { msgSpamAll } from '../services/spamService'
 
 export default async (ctx: Context) => {
   const { id } = ctx.from!
@@ -12,7 +11,7 @@ export default async (ctx: Context) => {
 
   if (user?.is_admin) {
     if (user?.state === 'prospam_all') {
-      await makeProspamAll(ctx)
+      await msgSpamAll(ctx)
       await setUserState(id, 'none')
       await adminMenu(ctx)
     } else {

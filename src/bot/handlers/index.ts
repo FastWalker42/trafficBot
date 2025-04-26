@@ -6,7 +6,7 @@ import msgHandler from './msg'
 import callbackHandler from './callback'
 
 import { adminCheck } from '../middlewares/adminCheck'
-import { adminsEditMenu } from '../services/adminService'
+import { adminsList } from '../services/adminService'
 import dumpHandler from './dump'
 
 export default (bot: Bot) => {
@@ -16,7 +16,7 @@ export default (bot: Bot) => {
 
   bot.command('start', startHandler)
   bot.command('dump', adminCheck, dumpHandler)
-  bot.command('admins', adminCheck, adminsEditMenu)
+  bot.command('admins', adminCheck, adminsList)
 
   bot.on('callback_query:data', callbackHandler)
 

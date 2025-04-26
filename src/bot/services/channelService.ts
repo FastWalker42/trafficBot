@@ -2,7 +2,7 @@ import { Context, InlineKeyboard } from 'grammy'
 import {
   addChannel,
   checkUser,
-  removeChannel,
+  deleteChannel,
 } from '../../db/methods'
 import validateId from '../utils/validateId'
 import { parseCallbackData } from '../utils/parseCallBack'
@@ -60,7 +60,7 @@ export async function handleDeleteChannel(ctx: Context) {
   const channelId = data.replace('del-', '')
 
   const channel = await ctx.api.getChat(validateId(channelId))
-  await removeChannel(channelId)
+  await deleteChannel(channelId)
 
   await ctx.reply(
     `<b>❌ КАНАЛ УДАЛЁН: <a href='${
@@ -68,5 +68,29 @@ export async function handleDeleteChannel(ctx: Context) {
         ? `https://t.me/${channel.username}/`
         : channel.invite_link || ''
     }'>${channel.title}</a></b>`
+  )
+}
+
+export async function channelInputWait(ctx: Context) {
+  const { id } = ctx.from!
+
+  const user = await checkUser(id)
+  if (!user?.is_admin) {
+    await ctx.reply('❌ У тебя нет прав на это действие.')
+    return
+  }
+
+  await ctx.reply(
+    `<b>📊 ДОБАВЛЕНИЕ КАНАЛА 🤖</b>
+<blockquote>📩 перешлите любое сообщение из канала.
+
+<b>❗️для приватных каналов нужно выдать боту права добавлять пользователей</b></blockquote>
+`,
+    {
+      reply_markup: new InlineKeyboard().text(
+        'Отменить',
+        'adminMenu'
+      ),
+    }
   )
 }
