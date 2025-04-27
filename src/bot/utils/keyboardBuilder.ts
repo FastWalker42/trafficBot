@@ -66,7 +66,7 @@ export const editAdminsKeyboard = async (ctx: Context) => {
       ? 'delme'
       : `deladmin-${adminId}`
 
-    kb.text(label, `admin-${adminId}`)
+    kb.text(label, `adminsList`)
       .text(
         isCurrentUser ? '🔒 Удалить' : '❌ Удалить',
         deleteCallback
