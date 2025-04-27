@@ -83,13 +83,3 @@ export const cancelAdminKb = new InlineKeyboard().text(
   '❌ Назад в меню',
   'adminMenu'
 )
-
-export const addAdminKb = new Keyboard()
-  .requestUsers('Добавить админа', 34334, {
-    user_is_bot: false,
-  })
-  .row()
-  .requestChat('Добавить канал в ОП', 3, {
-    chat_is_channel: true,
-  })
-  .resized(true)

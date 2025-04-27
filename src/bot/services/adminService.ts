@@ -9,7 +9,6 @@ import {
   adminChannels,
   editAdminsKeyboard,
   cancelAdminKb,
-  addAdminKb,
 } from '../utils/keyboardBuilder'
 import { parseCallbackData } from '../utils/parseCallBack'
 
