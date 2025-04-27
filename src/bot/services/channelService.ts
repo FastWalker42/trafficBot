@@ -53,7 +53,8 @@ export async function handleAddChannel(ctx: Context) {
               ? `https://t.me/${channel.username}/`
               : channel.invite_link
           }'>${channel.title}</a></b>
-`
+`,
+          { reply_markup: { remove_keyboard: true } }
         )
         await adminMenu(ctx)
       }

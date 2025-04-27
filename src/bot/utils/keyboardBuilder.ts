@@ -1,4 +1,4 @@
-import { Context, InlineKeyboard, Keyboard } from 'grammy'
+import { Context, InlineKeyboard } from 'grammy'
 import { getAdmins, getAllChannels } from '../../db/methods'
 import processChannel from './processChannel'
 import validateId from './validateId'
