@@ -79,7 +79,7 @@ export async function adminInputWait(ctx: Context) {
     `<b>🔰 ДОБАВЛЕНИЕ АДМИНА 🤖</b>
 Отправьте ID админа. Получить ID можно в этом боте: @username_to_id_bot`,
     {
-      reply_markup: addAdminKb,
+      reply_markup: cancelAdminKb,
     }
   )
 }
