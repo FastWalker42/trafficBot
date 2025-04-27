@@ -54,11 +54,6 @@ export const adminChannels = async (ctx: Context) => {
   return kb
 }
 
-export const cancelAdminKb = new InlineKeyboard().text(
-  '❌ Назад',
-  'adminMenu'
-)
-
 export const editAdminsKeyboard = async (ctx: Context) => {
   const kb = new InlineKeyboard()
   const admins = await getAdmins()
@@ -71,7 +66,7 @@ export const editAdminsKeyboard = async (ctx: Context) => {
       ? 'delme'
       : `deladmin-${adminId}`
 
-    kb.text(label, `remove_admin_${adminId}`)
+    kb.text(label, `admin-${adminId}`)
       .text(
         isCurrentUser ? '🔒 Удалить' : '❌ Удалить',
         deleteCallback
@@ -79,5 +74,12 @@ export const editAdminsKeyboard = async (ctx: Context) => {
       .row()
   }
 
+  kb.text('➕ Добавить админа', 'addAdmin')
+
   return kb
 }
+
+export const cancelAdminKb = new InlineKeyboard().text(
+  '❌ Назад в меню',
+  'adminMenu'
+)

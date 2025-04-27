@@ -6,6 +6,7 @@ import {
 } from '../services/channelService'
 import {
   adminMenu,
+  adminInputWait,
   handleDeleteAdmin,
 } from '../services/adminService'
 
@@ -18,8 +19,9 @@ const ACTIONS = {
   notabot: notaBot,
   adminMenu: adminMenu,
   addChannel: channelInputWait,
+  delChannel: handleDeleteChannel,
   prospam_all: spamInputWait,
-  del: handleDeleteChannel,
+  addAdmin: adminInputWait,
   deladmin: handleDeleteAdmin,
   delme: delMe,
 }

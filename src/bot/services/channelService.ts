@@ -8,10 +8,11 @@ import {
 import validateId from '../utils/validateId'
 import { parseCallbackData } from '../utils/parseCallBack'
 import { cancelAdminKb } from '../utils/keyboardBuilder'
+import { adminMenu } from './adminService'
 
 const channelEditKb = (channelId: number | string) => {
   return new InlineKeyboard()
-    .text('❌ Удалить', `del-${channelId}`)
+    .text('❌ Удалить', `delChannel-${channelId}`)
     .row()
     .text('Назад в меню ⤵️', `adminMenu`)
 }
@@ -52,9 +53,9 @@ export async function handleAddChannel(ctx: Context) {
               ? `https://t.me/${channel.username}/`
               : channel.invite_link
           }'>${channel.title}</a></b>
-`,
-          { reply_markup: channelEditKb(channelId) }
+`
         )
+        await adminMenu(ctx)
       }
     } else {
       ctx.reply(
@@ -74,10 +75,7 @@ export async function handleDeleteChannel(ctx: Context) {
     return ctx.reply('❌ У тебя нет прав на это действие.')
   }
 
-  const data = ctx.callbackQuery?.data
-  if (!data?.startsWith('del-')) return
-
-  const channelId = data.replace('del-', '')
+  const channelId = parseCallbackData(ctx.callbackQuery?.data!)
 
   const channel = await ctx.api.getChat(validateId(channelId))
   await deleteChannel(channelId)
@@ -89,6 +87,7 @@ export async function handleDeleteChannel(ctx: Context) {
         : channel.invite_link || ''
     }'>${channel.title}</a></b>`
   )
+  await adminMenu(ctx)
 }
 
 export async function channelInputWait(ctx: Context) {

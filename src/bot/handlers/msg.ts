@@ -1,7 +1,7 @@
 import { Context } from 'grammy'
 import { checkUser, setUserState } from '../../db/methods'
 import { handleAddChannel } from '../services/channelService'
-import { adminMenu } from '../services/adminService'
+import { adminMenu, handleAddAdmin } from '../services/adminService'
 import { msgSpamAll } from '../services/spamService'
 
 export default async (ctx: Context) => {
@@ -16,6 +16,8 @@ export default async (ctx: Context) => {
       await adminMenu(ctx)
     } else if (user?.state === 'opchannel_input') {
       await handleAddChannel(ctx)
+    } else if (user?.state === 'admin_input') {
+      await handleAddAdmin(ctx)
     }
   }
 }
