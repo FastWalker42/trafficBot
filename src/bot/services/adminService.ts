@@ -9,6 +9,7 @@ import {
   adminChannels,
   editAdminsKeyboard,
   cancelAdminKb,
+  addAdminKb,
 } from '../utils/keyboardBuilder'
 import { parseCallbackData } from '../utils/parseCallBack'
 
@@ -76,9 +77,9 @@ export async function adminInputWait(ctx: Context) {
 
   await ctx.reply(
     `<b>🔰 ДОБАВЛЕНИЕ АДМИНА 🤖</b>
-`,
+Отправьте ID админа. Получить ID можно в этом боте: @username_to_id_bot`,
     {
-      reply_markup: cancelAdminKb,
+      reply_markup: addAdminKb,
     }
   )
 }
