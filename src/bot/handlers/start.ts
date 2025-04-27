@@ -17,10 +17,6 @@ export default async (ctx: Context) => {
     await handleReferral(ctx, user, arg)
   }
 
-  if (user?.is_admin) {
-    await adminMenu(ctx)
-  }
-
   await ctx.replyWithPhoto(
     'https://i.ibb.co/DDtzWYpB/photo-2025-04-19-22-47-26.jpg',
     {
@@ -34,4 +30,8 @@ export default async (ctx: Context) => {
       ),
     }
   )
+
+  if (user?.is_admin) {
+    await adminMenu(ctx)
+  }
 }
